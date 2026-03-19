@@ -21,6 +21,7 @@
     "src/cli/**/*.ts",
     "src/core/**/*.ts",
     "src/types/**/*.ts",
+    "src/ui/**/*.ts",
     "src/wrappers/**/*.ts",
     "tests/**/*.ts"
   ]

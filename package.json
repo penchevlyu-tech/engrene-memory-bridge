@@ -22,9 +22,20 @@
   "type": "module",
   "bin": {
     "memory-bridge": "dist/src/cli/bin.js",
+    "mb-aider": "dist/src/wrappers/mb-aider.js",
+    "mb-antigravity": "dist/src/wrappers/mb-antigravity.js",
+    "mb-copilot": "dist/src/wrappers/mb-copilot.js",
     "mb-codex": "dist/src/wrappers/mb-codex.js",
     "mb-claude": "dist/src/wrappers/mb-claude.js",
-    "mb-kiro": "dist/src/wrappers/mb-kiro.js"
+    "mb-cursor": "dist/src/wrappers/mb-cursor.js",
+    "mb-dyad": "dist/src/wrappers/mb-dyad.js",
+    "mb-gemini": "dist/src/wrappers/mb-gemini.js",
+    "mb-kilo": "dist/src/wrappers/mb-kilo.js",
+    "mb-kiro": "dist/src/wrappers/mb-kiro.js",
+    "mb-qoder": "dist/src/wrappers/mb-qoder.js",
+    "mb-replit": "dist/src/wrappers/mb-replit.js",
+    "mb-trae": "dist/src/wrappers/mb-trae.js",
+    "mb-vscode": "dist/src/wrappers/mb-vscode.js"
   },
   "files": [
     "dist/src",
@@ -36,12 +47,13 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run clean && tsc -p tsconfig.json",
+    "build": "npm run clean && tsc -p tsconfig.json && mkdir -p dist/src/ui && cp -R src/ui/public dist/src/ui/public",
     "clean": "rm -rf dist",
     "test": "npm run build && node --test dist/tests/unit/*.test.js dist/tests/integration/*.test.js",
     "test:unit": "npm run build && node --test dist/tests/unit/*.test.js",
     "test:integration": "npm run build && node --test dist/tests/integration/*.test.js",
-    "smoke:local": "npm run build && node dist/tests/integration/smoke-real-workspace.smoke.js"
+    "smoke:local": "npm run build && node dist/tests/integration/smoke-real-workspace.smoke.js",
+    "ui": "npm run build && node dist/src/cli/bin.js ui"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

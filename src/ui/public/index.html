@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Bridge UI</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div>
+          <p class="eyebrow" data-i18n="brand.eyebrow">Engrene Local-First</p>
+          <h1 data-i18n="brand.title">Memory Bridge UI</h1>
+          <p id="workspace" class="muted">Loading workspace...</p>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="lang-control">
+          <span data-i18n="ui.language">Language</span>
+          <select id="langSelect">
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <button id="themeToggleBtn" class="ghost-btn" type="button">Dark Mode</button>
+        <button id="refreshBtn" class="ghost-btn" data-i18n="btn.refresh">Refresh</button>
+        <button id="buildHandoffBtn" data-i18n="btn.buildHandoff">Build Handoff</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.currentSnapshot">Current Snapshot</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.currentSnapshot">
+              Auto-built context from your memory files: objective, pending items, next steps, and warnings.
+            </p>
+          </details>
+        </div>
+        <div class="snapshot-grid">
+          <div>
+            <h3 data-i18n="field.objective">Objective</h3>
+            <p id="objective"></p>
+          </div>
+          <div>
+            <h3 data-i18n="field.pending">Pending</h3>
+            <ul id="pending"></ul>
+          </div>
+          <div>
+            <h3 data-i18n="field.nextSteps">Next Steps</h3>
+            <ul id="nextSteps"></ul>
+          </div>
+          <div>
+            <h3 data-i18n="field.warnings">Warnings</h3>
+            <ul id="warnings"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2 data-i18n="section.quickLog">Quick Log</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.quickLog">Save what you just did. These events power handoff and cross-tool resume.</p>
+          </details>
+        </div>
+        <form id="logForm" class="stack">
+          <label><span data-i18n="label.tool">Tool</span> <input name="tool" value="ui" required /></label>
+          <label><span data-i18n="label.intent">Intent</span> <input name="intent" required /></label>
+          <label><span data-i18n="label.summary">Summary</span> <input name="summary" required /></label>
+          <label><span data-i18n="label.actions">Actions (comma separated)</span> <input name="actions" /></label>
+          <label><span data-i18n="label.artifacts">Artifacts (comma separated)</span> <input name="artifacts" /></label>
+          <label><span data-i18n="label.tags">Tags (comma separated)</span> <input name="tags" /></label>
+          <button type="submit" data-i18n="btn.saveSession">Save Session Event</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2 data-i18n="section.addDecision">Add Decision</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.addDecision">Record important decisions so future sessions know what was chosen and why.</p>
+          </details>
+        </div>
+        <form id="decisionForm" class="stack">
+          <label><span data-i18n="label.title">Title</span> <input name="title" required /></label>
+          <label><span data-i18n="label.decision">Decision</span> <textarea name="decision" rows="3" required></textarea></label>
+          <label><span data-i18n="label.context">Context</span> <textarea name="context" rows="2"></textarea></label>
+          <label><span data-i18n="label.impact">Impact</span> <textarea name="impact" rows="2"></textarea></label>
+          <label><span data-i18n="label.supersedes">Supersedes (comma separated)</span> <input name="supersedes" /></label>
+          <button type="submit" data-i18n="btn.saveDecision">Save Decision</button>
+        </form>
+      </section>
+
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.projectContext">Project Context (editable)</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.projectContext">
+              Editable high-level project notes: goals, scope, constraints, and shared context.
+            </p>
+          </details>
+        </div>
+        <textarea id="projectContext" rows="10"></textarea>
+        <div class="actions-inline">
+          <button id="saveProjectContextBtn" data-i18n="btn.saveProjectContext">Save Project Context</button>
+        </div>
+      </section>
+
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.handoff">Handoff (editable)</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.handoff">
+              Transfer note for the next IDE/CLI or teammate. Build it automatically or edit manually.
+            </p>
+          </details>
+        </div>
+        <textarea id="handoff" rows="12"></textarea>
+        <div class="actions-inline">
+          <button id="saveHandoffBtn" data-i18n="btn.saveHandoff">Save Handoff</button>
+        </div>
+      </section>
+
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.search">Search</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.search">
+              Search previous sessions, decisions, handoff, and context. Semantic mode uses local vector index if enabled.
+            </p>
+          </details>
+        </div>
+        <form id="searchForm" class="search-row">
+          <input name="query" placeholder="Search memory..." data-i18n-placeholder="placeholder.searchMemory" required />
+          <select name="mode">
+            <option value="text" data-i18n="mode.text">text</option>
+            <option value="semantic" data-i18n="mode.semantic">semantic</option>
+          </select>
+          <button type="submit" data-i18n="btn.search">Search</button>
+        </form>
+        <ul id="searchResults" class="results"></ul>
+      </section>
+
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.recentDecisions">Recent Decisions</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.recentDecisions">
+              Latest entries from <code>decisions.jsonl</code> to help you understand project direction quickly.
+            </p>
+          </details>
+        </div>
+        <ul id="decisionsList" class="timeline"></ul>
+      </section>
+
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.recentSessions">Recent Sessions</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.recentSessions">
+              Latest session events from daily JSONL files. Useful to see recent activity across tools.
+            </p>
+          </details>
+        </div>
+        <ul id="sessionsList" class="timeline"></ul>
+      </section>
+
+      <section class="card span-2">
+        <div class="section-head">
+          <h2 data-i18n="section.doctor">Doctor</h2>
+          <details class="help-popover">
+            <summary aria-label="Help">?</summary>
+            <p data-i18n="help.doctor">
+              Runs health and safety checks: files, permissions, redaction, encryption setup, and leak-risk scan.
+            </p>
+          </details>
+        </div>
+        <button id="runDoctorBtn" data-i18n="btn.runDoctor">Run Doctor</button>
+        <ul id="doctorResults" class="results"></ul>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

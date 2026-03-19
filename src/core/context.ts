@@ -61,7 +61,13 @@ function derivePendingFromSessions(events: SessionEvent[]): string[] {
 }
 
 function compactList(items: string[], limit: number): string[] {
-  const deduped = Array.from(new Set(items.map((item) => item.trim()).filter((item) => item !== "")));
+  const deduped = Array.from(
+    new Set(
+      items
+        .map((item) => item.trim())
+        .filter((item) => item !== "" && !/^(n\/a|na|none)$/i.test(item))
+    )
+  );
   return deduped.slice(0, limit);
 }
 

@@ -45,7 +45,7 @@ function runMemoryBridgeAndContinue(args: string[]): void {
   }
 }
 
-export function runWrapper(tool: "codex" | "claude" | "kiro", argv: string[]): void {
+export function runWrapper(tool: string, argv: string[]): void {
   const [action, ...rest] = argv;
   const asJson = hasFlag(rest, "--json");
   const workspace = getFlagValue(rest, "--workspace");

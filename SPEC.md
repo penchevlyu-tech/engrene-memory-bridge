@@ -105,13 +105,28 @@ Core commands:
 - `resume --for <tool>`
 - `doctor`
 - `search <query>`
+- `ui`
 
 ## 8. Wrapper Contract
 
 Official wrappers:
 - `mb-codex`
 - `mb-claude`
+- `mb-gemini`
 - `mb-kiro`
+- `mb-kilo`
+- `mb-copilot`
+- `mb-aider`
+- `mb-antigravity`
+- `mb-trae`
+- `mb-dyad`
+- `mb-replit`
+- `mb-qoder`
+- `mb-cursor`
+- `mb-vscode`
+
+Wrapper naming pattern:
+- `mb-<tool>`
 
 Behavior:
 - `pre`: run `resume --for <tool>`

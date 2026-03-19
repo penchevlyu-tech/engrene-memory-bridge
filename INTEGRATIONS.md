@@ -28,7 +28,16 @@ This contract is specifically designed for cross-tool continuity:
 
 - Codex: `mb-codex`
 - Claude: `mb-claude`
+- Gemini: `mb-gemini`
 - Kiro: `mb-kiro`
+- Kilo: `mb-kilo`
+- Copilot CLI: `mb-copilot`
+- Aider: `mb-aider`
+- Antigravity: `mb-antigravity`
+- Trae: `mb-trae`
+- Dyad: `mb-dyad`
+- Replit: `mb-replit`
+- Qoder: `mb-qoder`
 
 ### Common tools with contract-based support
 
@@ -38,13 +47,19 @@ Use Option A (manual) or Option C (native hooks/scripts):
 - VS Code (Continue/Cline and similar)
 - Windsurf
 - JetBrains IDEs
-- Gemini CLI
-- GitHub Copilot CLI
-- Aider
-- Replit
 - Firebase Studio
 
 Requirement: the tool must allow shell commands and/or task hooks.
+
+## Visual mode for developers
+
+For teams that want a visual view/edit layer over the same memory contract:
+
+```bash
+memory-bridge ui
+```
+
+This opens a local dashboard to inspect and edit context/handoff and create events while keeping CLI interoperability unchanged.
 
 ## Option A: Manual (works everywhere)
 
@@ -69,13 +84,27 @@ Use built-in wrappers:
 
 - `mb-codex pre|post`
 - `mb-claude pre|post`
+- `mb-gemini pre|post`
 - `mb-kiro pre|post`
+- `mb-kilo pre|post`
+- `mb-copilot pre|post`
+- `mb-aider pre|post`
+- `mb-antigravity pre|post`
+- `mb-trae pre|post`
+- `mb-dyad pre|post`
+- `mb-replit pre|post`
+- `mb-qoder pre|post`
+- `mb-cursor pre|post`
+- `mb-vscode pre|post`
 
 Example:
 
 ```bash
 mb-claude pre
 mb-claude post --intent "Fix auth race" --summary "Locking added" --actions "TODO: benchmark" --artifacts "src/auth.ts"
+
+mb-gemini pre
+mb-gemini post --intent "Close security gap" --summary "Validation improved" --actions "TODO: add stress test" --artifacts "src/security.ts"
 ```
 
 ## Option C: Native hooks (if your IDE supports them)

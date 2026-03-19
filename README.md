@@ -46,11 +46,20 @@ This keeps memory useful and compact. You get the important context without dump
 
 ## Popular tools that already work
 
-### Official wrappers (ready now)
+### Official wrappers (ready now, CLI-first)
 
 - Codex (`mb-codex`)
 - Claude (`mb-claude`)
+- Gemini (`mb-gemini`)
 - Kiro (`mb-kiro`)
+- Kilo (`mb-kilo`)
+- Copilot CLI (`mb-copilot`)
+- Aider (`mb-aider`)
+- Antigravity (`mb-antigravity`)
+- Trae (`mb-trae`)
+- Dyad (`mb-dyad`)
+- Replit (`mb-replit`)
+- Qoder (`mb-qoder`)
 
 ### Works via contract (manual commands or hooks)
 
@@ -60,10 +69,6 @@ These are commonly used and can integrate with Memory Bridge through terminal co
 - VS Code (including extensions like Continue/Cline)
 - Windsurf
 - JetBrains IDEs
-- Gemini CLI
-- GitHub Copilot CLI
-- Aider
-- Replit
 - Firebase Studio (via terminal/task scripts)
 
 If a tool can run shell commands or supports pre/post task scripts, it can use the same memory contract.
@@ -132,6 +137,30 @@ memory-bridge handoff build
 memory-bridge resume --for claude
 ```
 
+## Visual local dashboard (with editing)
+
+Start the local UI:
+
+```bash
+memory-bridge ui
+```
+
+Options:
+
+```bash
+memory-bridge ui --port 8787 --host 127.0.0.1
+memory-bridge ui --readonly
+```
+
+The UI supports:
+
+- Editing `project-context.md`
+- Editing `handoff.md`
+- Creating session events (`log`)
+- Creating decision events (`decision add`)
+- Rebuilding handoff
+- Running doctor and search
+
 ## What should users ask the IDE/agent?
 
 If your IDE does not support hooks, users can copy this instruction template:
@@ -150,7 +179,18 @@ Wrappers already enforce the pre/post flow:
 
 - `mb-codex`
 - `mb-claude`
+- `mb-gemini`
 - `mb-kiro`
+- `mb-kilo`
+- `mb-copilot`
+- `mb-aider`
+- `mb-antigravity`
+- `mb-trae`
+- `mb-dyad`
+- `mb-replit`
+- `mb-qoder`
+- `mb-cursor`
+- `mb-vscode`
 
 Examples:
 
@@ -161,6 +201,13 @@ mb-codex post \
   --summary "Done" \
   --actions "TODO: e2e" \
   --artifacts "apps/api/src/documents/documents.service.ts"
+
+mb-gemini pre --json
+mb-gemini post \
+  --intent "Continue auth hardening" \
+  --summary "Added token checks" \
+  --actions "TODO: benchmark" \
+  --artifacts "apps/api/src/auth/token.guard.ts"
 ```
 
 ## Security

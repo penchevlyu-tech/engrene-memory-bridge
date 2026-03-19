@@ -18,5 +18,5 @@
 
 ## Post-release
 - [ ] Validate install in clean environment
-- [ ] Validate binaries: `memory-bridge`, `mb-codex`, `mb-claude`, `mb-kiro`
+- [ ] Validate binaries: `memory-bridge`, `mb-codex`, `mb-claude`, `mb-gemini`, `mb-kiro`, `mb-kilo` (and any newly added `mb-*`)
 - [ ] Run quick bootstrap in sample repo (`init`, `log`, `resume`, `handoff build`)

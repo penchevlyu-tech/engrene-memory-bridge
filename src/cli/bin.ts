@@ -11,6 +11,7 @@ import { currentGitBranch } from "../core/git.js";
 import { searchMemory, type SearchMode } from "../core/search.js";
 import { appendDecisionEvent, appendSessionEvent, saveHandoff } from "../core/store.js";
 import { semanticEnabled, upsertSemanticDoc } from "../core/vector.js";
+import { startUiServer } from "../ui/server.js";
 import type { DecisionEvent, SessionEvent } from "../types/events.js";
 
 function usage(): string {
@@ -24,6 +25,7 @@ Commands:
   resume --for <tool> [--workspace <path>] [--json]
   doctor [--workspace <path>] [--json]
   search <query> [--mode text|semantic] [--limit <n>] [--workspace <path>] [--json]
+  ui [--workspace <path>] [--host <host>] [--port <n>] [--readonly] [--json]
 `;
 }
 
@@ -301,6 +303,42 @@ async function commandSearch(argv: string[], asJson: boolean): Promise<void> {
   printOutput(lines.join("\n"), false);
 }
 
+async function commandUi(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const host = getStringFlag(parsed, "host", "127.0.0.1") || "127.0.0.1";
+  const port = parseLimit(getStringFlag(parsed, "port"), 8787);
+  const readonly = getBoolFlag(parsed, "readonly", false);
+
+  const server = await startUiServer({ workspace, host, port, readonly });
+  const payload = {
+    ok: true,
+    command: "ui",
+    workspace,
+    host,
+    port,
+    readonly,
+    url: server.url
+  };
+
+  if (asJson) {
+    printOutput(payload, true);
+  } else {
+    printOutput(`Memory Bridge UI running at ${server.url}`, false);
+  }
+
+  const shutdown = async () => {
+    await server.close();
+    process.exit(0);
+  };
+  process.on("SIGINT", () => {
+    void shutdown();
+  });
+  process.on("SIGTERM", () => {
+    void shutdown();
+  });
+}
+
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const asJson = argv.includes("--json");
@@ -346,6 +384,11 @@ async function main(): Promise<void> {
 
   if (command === "search") {
     await commandSearch(commandArgs, asJson);
+    return;
+  }
+
+  if (command === "ui") {
+    await commandUi(commandArgs, asJson);
     return;
   }
 
