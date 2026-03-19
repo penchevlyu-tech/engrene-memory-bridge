@@ -116,6 +116,29 @@ Map these commands:
   - `memory-bridge log --tool <tool> ... --json`
   - `memory-bridge handoff build --json`
 
+## Option D: Windows scripts (PowerShell/cmd)
+
+If your team uses Windows terminals, use the helper scripts from `scripts/windows`:
+
+- `scripts/windows/mb-pre.ps1`
+- `scripts/windows/mb-post.ps1`
+- `scripts/windows/mb-pre.cmd`
+- `scripts/windows/mb-post.cmd`
+
+PowerShell example:
+
+```powershell
+.\scripts\windows\mb-pre.ps1 -Tool gemini
+.\scripts\windows\mb-post.ps1 -Tool gemini -Intent "Implement report export" -Summary "CSV endpoint added" -Actions "TODO: pagination" -Artifacts "src/reports.ts" -Tags "reporting,api"
+```
+
+cmd example:
+
+```cmd
+scripts\windows\mb-pre.cmd -Tool gemini
+scripts\windows\mb-post.cmd -Tool gemini -Intent "Implement report export" -Summary "CSV endpoint added" -Actions "TODO: pagination" -Artifacts "src/reports.ts" -Tags "reporting,api"
+```
+
 ## User prompt template for IDEs
 
 When users want consistent behavior, use this instruction in IDE/system prompt:

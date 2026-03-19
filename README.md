@@ -79,6 +79,8 @@ If a tool can run shell commands or supports pre/post task scripts, it can use t
 npm install -g memory-bridge
 # or (if unscoped name is unavailable)
 # npm install -g @engrene/memory-bridge
+# or install directly from this repository
+npm install -g git+https://github.com/leninejunior/engrene-memory-bridge.git
 ```
 
 ## 1-minute setup
@@ -226,6 +228,29 @@ mb-gemini post \
   --summary "Added token checks" \
   --actions "TODO: benchmark" \
   --artifacts "apps/api/src/auth/token.guard.ts"
+```
+
+## Windows helpers (PowerShell and cmd)
+
+Ready-to-use scripts are available in [`scripts/windows`](./scripts/windows/README.md):
+
+- `scripts/windows/mb-pre.ps1`
+- `scripts/windows/mb-post.ps1`
+- `scripts/windows/mb-pre.cmd`
+- `scripts/windows/mb-post.cmd`
+
+PowerShell example:
+
+```powershell
+.\scripts\windows\mb-pre.ps1 -Tool codex
+.\scripts\windows\mb-post.ps1 -Tool codex -Intent "Fix auth flow" -Summary "Added guard checks" -Actions "TODO: e2e" -Artifacts "src/auth.ts" -Tags "auth,fix"
+```
+
+cmd example:
+
+```cmd
+scripts\windows\mb-pre.cmd -Tool codex
+scripts\windows\mb-post.cmd -Tool codex -Intent "Fix auth flow" -Summary "Added guard checks" -Actions "TODO: e2e" -Artifacts "src/auth.ts" -Tags "auth,fix"
 ```
 
 ## Security
