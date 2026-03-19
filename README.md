@@ -16,6 +16,24 @@ Every tool reads and writes the same memory contract:
 
 This is how context survives tool switching.
 
+## Why use this instead of an MCP memory server?
+
+- No vendor lock-in: memory is plain files in your repository, not tied to one runtime.
+- Tool interoperability: any IDE/CLI can read and write the same contract.
+- Local-first privacy: data stays local by default, with redaction and optional encryption.
+- Auditability: you can inspect exactly what was stored and why.
+- Resilience: workflows continue even if a remote memory service is unavailable.
+
+## What gets stored?
+
+Memory Bridge stores operational memory, not full raw transcripts by default.
+
+- Session events: intent, actions, artifacts, summary, tags.
+- Decision events: key technical decisions and impact.
+- Handoff: a compact current-state summary for the next tool/person.
+
+This keeps memory useful and compact. You get the important context without dumping everything.
+
 ## Install
 
 ```bash
@@ -177,3 +195,7 @@ npm run smoke:local
 ## License
 
 MIT
+
+## Contact
+
+For support, integrations, or partnerships: `lenine@engrene.com`
