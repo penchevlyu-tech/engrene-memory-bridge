@@ -1,0 +1,185 @@
+import type { BridgeConfig, SearchHit } from "../types/events.js";
+import { readDecisionEvents, readHandoff, readProjectContext, readSessionEvents } from "./store.js";
+import { semanticEnabled, semanticSearch, upsertSemanticDoc } from "./vector.js";
+
+export type SearchMode = "text" | "semantic";
+
+function normalize(input: string): string {
+  return input.toLowerCase();
+}
+
+function textScore(query: string, content: string): number {
+  const q = normalize(query).trim();
+  if (!q) {
+    return 0;
+  }
+  const c = normalize(content);
+  let index = 0;
+  let count = 0;
+  while (true) {
+    const found = c.indexOf(q, index);
+    if (found < 0) {
+      break;
+    }
+    count += 1;
+    index = found + q.length;
+  }
+  return count;
+}
+
+function snippet(content: string, query: string): string {
+  const normalized = normalize(content);
+  const idx = normalized.indexOf(normalize(query));
+  if (idx < 0) {
+    return content.slice(0, 240);
+  }
+  const start = Math.max(0, idx - 80);
+  const end = Math.min(content.length, idx + 160);
+  return content.slice(start, end);
+}
+
+export async function indexSemanticFromState(workspace: string, config: BridgeConfig): Promise<void> {
+  if (!semanticEnabled(config)) {
+    return;
+  }
+
+  const [sessionsResult, decisionsResult, handoffResult, projectContext] = await Promise.all([
+    readSessionEvents(workspace, config, 300),
+    readDecisionEvents(workspace, config, 200),
+    readHandoff(workspace, config),
+    readProjectContext(workspace)
+  ]);
+
+  for (const event of sessionsResult.events) {
+    await upsertSemanticDoc(workspace, config, {
+      id: `session:${event.ts}:${event.tool}`,
+      source: "sessions",
+      ts: event.ts,
+      ref: `session:${event.ts}`,
+      text: [event.intent, event.summary, ...event.actions, ...event.artifacts, ...event.tags].join("\n")
+    });
+  }
+
+  for (const event of decisionsResult.events) {
+    await upsertSemanticDoc(workspace, config, {
+      id: `decision:${event.id}`,
+      source: "decisions",
+      ts: event.ts,
+      ref: `decision:${event.id}`,
+      text: [event.title, event.context, event.decision, event.impact, ...event.supersedes].join("\n")
+    });
+  }
+
+  if (handoffResult.text) {
+    await upsertSemanticDoc(workspace, config, {
+      id: "handoff:latest",
+      source: "handoff",
+      ts: new Date().toISOString(),
+      ref: "handoff.md",
+      text: handoffResult.text
+    });
+  }
+
+  if (projectContext) {
+    await upsertSemanticDoc(workspace, config, {
+      id: "project-context:latest",
+      source: "project-context",
+      ts: new Date().toISOString(),
+      ref: "project-context.md",
+      text: projectContext
+    });
+  }
+}
+
+export async function searchMemory(args: {
+  workspace: string;
+  config: BridgeConfig;
+  query: string;
+  mode: SearchMode;
+  limit: number;
+}): Promise<{ hits: SearchHit[]; warnings: string[] }> {
+  const { workspace, config, query, mode, limit } = args;
+  const warnings: string[] = [];
+
+  const [sessionsResult, decisionsResult, handoffResult, projectContext] = await Promise.all([
+    readSessionEvents(workspace, config, 300),
+    readDecisionEvents(workspace, config, 200),
+    readHandoff(workspace, config),
+    readProjectContext(workspace)
+  ]);
+
+  warnings.push(...sessionsResult.warnings, ...decisionsResult.warnings, ...handoffResult.warnings);
+
+  const textHits: SearchHit[] = [];
+
+  for (const event of sessionsResult.events) {
+    const content = [event.intent, event.summary, ...event.actions, ...event.artifacts, ...event.tags].join("\n");
+    const score = textScore(query, content);
+    if (score > 0) {
+      textHits.push({
+        source: "sessions",
+        score,
+        ts: event.ts,
+        ref: `session:${event.ts}`,
+        snippet: snippet(content, query)
+      });
+    }
+  }
+
+  for (const event of decisionsResult.events) {
+    const content = [event.title, event.context, event.decision, event.impact, ...event.supersedes].join("\n");
+    const score = textScore(query, content);
+    if (score > 0) {
+      textHits.push({
+        source: "decisions",
+        score,
+        ts: event.ts,
+        ref: `decision:${event.id}`,
+        snippet: snippet(content, query)
+      });
+    }
+  }
+
+  if (handoffResult.text) {
+    const score = textScore(query, handoffResult.text);
+    if (score > 0) {
+      textHits.push({
+        source: "handoff",
+        score,
+        ref: "handoff.md",
+        snippet: snippet(handoffResult.text, query)
+      });
+    }
+  }
+
+  if (projectContext) {
+    const score = textScore(query, projectContext);
+    if (score > 0) {
+      textHits.push({
+        source: "project-context",
+        score,
+        ref: "project-context.md",
+        snippet: snippet(projectContext, query)
+      });
+    }
+  }
+
+  const sortedTextHits = textHits.sort((a, b) => b.score - a.score).slice(0, Math.max(1, limit));
+
+  if (mode === "text") {
+    return { hits: sortedTextHits, warnings };
+  }
+
+  if (!semanticEnabled(config)) {
+    warnings.push("Semantic search requested, but semanticSearch.enabled=false. Falling back to text search.");
+    return { hits: sortedTextHits, warnings };
+  }
+
+  await indexSemanticFromState(workspace, config);
+  const semanticHits = await semanticSearch(workspace, config, query, limit);
+  if (semanticHits.length === 0) {
+    warnings.push("Semantic index is empty. Returning text search hits.");
+    return { hits: sortedTextHits, warnings };
+  }
+  return { hits: semanticHits, warnings };
+}

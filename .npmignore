@@ -1,0 +1,6 @@
+src/
+tests/
+*.ts
+*.map
+node_modules/
+.memory-bridge/

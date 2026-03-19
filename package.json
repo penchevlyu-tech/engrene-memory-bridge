@@ -1,0 +1,53 @@
+{
+  "name": "memory-bridge",
+  "version": "0.1.0",
+  "description": "Local-first interoperable memory bridge for AI tools and CLIs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leninejunior/engrene-memory-bridge.git"
+  },
+  "homepage": "https://github.com/leninejunior/engrene-memory-bridge#readme",
+  "bugs": {
+    "url": "https://github.com/leninejunior/engrene-memory-bridge/issues"
+  },
+  "keywords": [
+    "ai",
+    "memory",
+    "handoff",
+    "context",
+    "cli",
+    "local-first"
+  ],
+  "type": "module",
+  "bin": {
+    "memory-bridge": "dist/src/cli/bin.js",
+    "mb-codex": "dist/src/wrappers/mb-codex.js",
+    "mb-claude": "dist/src/wrappers/mb-claude.js",
+    "mb-kiro": "dist/src/wrappers/mb-kiro.js"
+  },
+  "files": [
+    "dist/src",
+    "README.md",
+    "INTEGRATIONS.md",
+    "SPEC.md",
+    "CONTRIBUTING.md",
+    "RELEASE_CHECKLIST.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "test": "npm run build && node --test dist/tests/unit/*.test.js dist/tests/integration/*.test.js",
+    "test:unit": "npm run build && node --test dist/tests/unit/*.test.js",
+    "test:integration": "npm run build && node --test dist/tests/integration/*.test.js",
+    "smoke:local": "npm run build && node dist/tests/integration/smoke-real-workspace.smoke.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

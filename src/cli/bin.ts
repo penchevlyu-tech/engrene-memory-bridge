@@ -1,0 +1,359 @@
+#!/usr/bin/env node
+
+import path from "node:path";
+
+import { getBoolFlag, getListFlag, getStringFlag, parseArgs } from "./args.js";
+import { fail, printOutput } from "./output.js";
+import { initWorkspace, loadConfig } from "../core/config.js";
+import { buildContextSnapshot, renderHandoffMarkdown, renderResumeText } from "../core/context.js";
+import { runDoctor } from "../core/doctor.js";
+import { currentGitBranch } from "../core/git.js";
+import { searchMemory, type SearchMode } from "../core/search.js";
+import { appendDecisionEvent, appendSessionEvent, saveHandoff } from "../core/store.js";
+import { semanticEnabled, upsertSemanticDoc } from "../core/vector.js";
+import type { DecisionEvent, SessionEvent } from "../types/events.js";
+
+function usage(): string {
+  return `memory-bridge
+
+Commands:
+  init [--workspace <path>] [--project-name <name>] [--encryption] [--semantic] [--no-redaction] [--json]
+  log --tool <tool> --intent <intent> --summary <summary> [--actions a,b] [--artifacts a,b] [--tags a,b] [--workspace <path>] [--branch <name>] [--json]
+  decision add --title <title> --decision <decision> [--context <text>] [--impact <text>] [--id <id>] [--supersedes a,b] [--workspace <path>] [--json]
+  handoff build [--workspace <path>] [--json]
+  resume --for <tool> [--workspace <path>] [--json]
+  doctor [--workspace <path>] [--json]
+  search <query> [--mode text|semantic] [--limit <n>] [--workspace <path>] [--json]
+`;
+}
+
+function requireString(value: string | undefined, name: string, asJson: boolean): string {
+  if (!value || value.trim() === "") {
+    fail(`Missing required argument: ${name}`, asJson);
+  }
+  return value;
+}
+
+function parseLimit(raw: string | undefined, fallback: number): number {
+  if (!raw) {
+    return fallback;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (Number.isNaN(parsed) || parsed <= 0) {
+    return fallback;
+  }
+  return parsed;
+}
+
+function normalizeWorkspace(raw: string | undefined): string {
+  return path.resolve(raw || process.cwd());
+}
+
+async function commandInit(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const initArgs = {
+    workspace,
+    enableEncryption: getBoolFlag(parsed, "encryption", false),
+    enableSemanticSearch: getBoolFlag(parsed, "semantic", false),
+    disableRedaction: getBoolFlag(parsed, "no-redaction", false)
+  };
+  const projectName = getStringFlag(parsed, "project-name");
+  const result = await initWorkspace(
+    projectName ? { ...initArgs, projectName } : initArgs
+  );
+
+  printOutput(
+    {
+      ok: true,
+      command: "init",
+      workspace,
+      created: result.created,
+      updated: result.updated,
+      config: result.config
+    },
+    asJson
+  );
+}
+
+async function commandLog(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const { config } = await loadConfig(workspace);
+
+  const ts = new Date().toISOString();
+  const tool = requireString(getStringFlag(parsed, "tool"), "--tool", asJson);
+  const intent = requireString(getStringFlag(parsed, "intent"), "--intent", asJson);
+  const summary = requireString(getStringFlag(parsed, "summary"), "--summary", asJson);
+
+  const event: SessionEvent = {
+    ts,
+    tool,
+    workspace,
+    branch: getStringFlag(parsed, "branch") || currentGitBranch(workspace),
+    intent,
+    actions: getListFlag(parsed, "actions"),
+    artifacts: getListFlag(parsed, "artifacts"),
+    summary,
+    tags: getListFlag(parsed, "tags")
+  };
+
+  const persist = await appendSessionEvent(workspace, config, event);
+
+  if (semanticEnabled(config)) {
+    await upsertSemanticDoc(workspace, config, {
+      id: `session:${event.ts}:${event.tool}`,
+      source: "sessions",
+      ts: event.ts,
+      ref: `session:${event.ts}`,
+      text: [event.intent, event.summary, ...event.actions, ...event.artifacts, ...event.tags].join("\n")
+    });
+  }
+
+  printOutput(
+    {
+      ok: true,
+      command: "log",
+      event,
+      persistedAt: persist.file,
+      encrypted: persist.encrypted
+    },
+    asJson
+  );
+}
+
+async function commandDecisionAdd(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const { config } = await loadConfig(workspace);
+
+  const event: DecisionEvent = {
+    id: getStringFlag(parsed, "id") || `dec-${Date.now().toString(36)}`,
+    ts: new Date().toISOString(),
+    title: requireString(getStringFlag(parsed, "title"), "--title", asJson),
+    context: getStringFlag(parsed, "context") || "N/A",
+    decision: requireString(getStringFlag(parsed, "decision"), "--decision", asJson),
+    impact: getStringFlag(parsed, "impact") || "N/A",
+    supersedes: getListFlag(parsed, "supersedes")
+  };
+
+  const persist = await appendDecisionEvent(workspace, config, event);
+
+  if (semanticEnabled(config)) {
+    await upsertSemanticDoc(workspace, config, {
+      id: `decision:${event.id}`,
+      source: "decisions",
+      ts: event.ts,
+      ref: `decision:${event.id}`,
+      text: [event.title, event.context, event.decision, event.impact, ...event.supersedes].join("\n")
+    });
+  }
+
+  printOutput(
+    {
+      ok: true,
+      command: "decision add",
+      event,
+      persistedAt: persist.file,
+      encrypted: persist.encrypted
+    },
+    asJson
+  );
+}
+
+async function commandHandoffBuild(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const { config } = await loadConfig(workspace);
+
+  const context = await buildContextSnapshot(workspace, config);
+  const recentArtifacts = context.sessions
+    .slice(-8)
+    .flatMap((session) => session.artifacts)
+    .slice(-12);
+
+  const markdown = renderHandoffMarkdown({
+    objective: context.snapshot.objective,
+    recentDecisions: context.snapshot.recentDecisions,
+    pending: context.snapshot.pending,
+    nextSteps: context.snapshot.nextSteps,
+    recentArtifacts
+  });
+
+  const persist = await saveHandoff(workspace, config, markdown);
+
+  if (semanticEnabled(config)) {
+    await upsertSemanticDoc(workspace, config, {
+      id: "handoff:latest",
+      source: "handoff",
+      ts: new Date().toISOString(),
+      ref: "handoff.md",
+      text: markdown
+    });
+  }
+
+  if (asJson) {
+    printOutput(
+      {
+        ok: true,
+        command: "handoff build",
+        persistedAt: persist.file,
+        encrypted: persist.encrypted,
+        warnings: context.snapshot.warnings,
+        markdown
+      },
+      true
+    );
+    return;
+  }
+
+  printOutput(markdown, false);
+}
+
+async function commandResume(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const targetTool = requireString(getStringFlag(parsed, "for"), "--for", asJson);
+  const { config, warnings: configWarnings } = await loadConfig(workspace);
+
+  const context = await buildContextSnapshot(workspace, config);
+  const mergedWarnings = [...configWarnings, ...context.snapshot.warnings];
+  const snapshot = { ...context.snapshot, warnings: mergedWarnings };
+  const resumeText = renderResumeText(targetTool, snapshot);
+
+  if (asJson) {
+    printOutput(
+      {
+        ok: true,
+        command: "resume",
+        tool: targetTool,
+        workspace,
+        snapshot,
+        resume: resumeText
+      },
+      true
+    );
+    return;
+  }
+
+  printOutput(resumeText, false);
+}
+
+async function commandDoctor(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const { config } = await loadConfig(workspace);
+  const result = await runDoctor(workspace, config);
+
+  if (asJson) {
+    printOutput({ ok: result.ok, command: "doctor", result }, true);
+  } else {
+    const lines = [
+      `Doctor: ${result.ok ? "OK" : "FAIL"}`,
+      ...result.checks.map((check) => {
+        const icon = check.ok ? "[ok]" : check.severity === "error" ? "[error]" : "[warn]";
+        return `${icon} ${check.name}: ${check.message}`;
+      })
+    ];
+    printOutput(lines.join("\n"), false);
+  }
+
+  if (!result.ok) {
+    process.exitCode = 1;
+  }
+}
+
+async function commandSearch(argv: string[], asJson: boolean): Promise<void> {
+  const parsed = parseArgs(argv);
+  const workspace = normalizeWorkspace(getStringFlag(parsed, "workspace"));
+  const query = requireString(parsed.positionals[0], "<query>", asJson);
+  const modeRaw = getStringFlag(parsed, "mode", "text") || "text";
+  const mode: SearchMode = modeRaw === "semantic" ? "semantic" : "text";
+  const limit = parseLimit(getStringFlag(parsed, "limit"), 10);
+
+  const { config } = await loadConfig(workspace);
+  const result = await searchMemory({ workspace, config, query, mode, limit });
+
+  if (asJson) {
+    printOutput(
+      {
+        ok: true,
+        command: "search",
+        mode,
+        query,
+        hits: result.hits,
+        warnings: result.warnings
+      },
+      true
+    );
+    return;
+  }
+
+  const lines: string[] = [`Search (${mode}) for: ${query}`];
+  for (const hit of result.hits) {
+    lines.push(`- [${hit.source}] score=${hit.score.toFixed(4)} ref=${hit.ref || "n/a"}`);
+    lines.push(`  ${hit.snippet.replace(/\s+/g, " ")}`);
+  }
+  if (result.warnings.length > 0) {
+    lines.push("Warnings:");
+    lines.push(...result.warnings.map((warning) => `- ${warning}`));
+  }
+  printOutput(lines.join("\n"), false);
+}
+
+async function main(): Promise<void> {
+  const argv = process.argv.slice(2);
+  const asJson = argv.includes("--json");
+  const cleanArgv = argv.filter((arg) => arg !== "--json");
+
+  if (cleanArgv.length === 0 || cleanArgv.includes("--help") || cleanArgv.includes("-h")) {
+    printOutput(usage(), false);
+    return;
+  }
+
+  const command = cleanArgv[0];
+  const commandArgs = cleanArgv.slice(1);
+
+  if (command === "init") {
+    await commandInit(commandArgs, asJson);
+    return;
+  }
+
+  if (command === "log") {
+    await commandLog(commandArgs, asJson);
+    return;
+  }
+
+  if (command === "decision" && commandArgs[0] === "add") {
+    await commandDecisionAdd(commandArgs.slice(1), asJson);
+    return;
+  }
+
+  if (command === "handoff" && commandArgs[0] === "build") {
+    await commandHandoffBuild(commandArgs.slice(1), asJson);
+    return;
+  }
+
+  if (command === "resume") {
+    await commandResume(commandArgs, asJson);
+    return;
+  }
+
+  if (command === "doctor") {
+    await commandDoctor(commandArgs, asJson);
+    return;
+  }
+
+  if (command === "search") {
+    await commandSearch(commandArgs, asJson);
+    return;
+  }
+
+  fail(`Unknown command.\n\n${usage()}`, asJson);
+}
+
+main().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  process.stderr.write(`${message}\n`);
+  process.exit(1);
+});
