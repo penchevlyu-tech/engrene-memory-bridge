@@ -6,6 +6,16 @@ Local-first memory bridge for AI workflows.
 
 `engrene-memory-bridge` keeps project memory in simple files (`.memory-bridge/*`) so different tools (IDEs, CLIs, agents) can share the same context without a proprietary plugin.
 
+## Main value
+
+Use this when you want one tool session to continue from another tool session.
+
+In practice, this means:
+
+- IDE A logs work.
+- IDE/CLI B resumes from that exact context.
+- Teams can switch tools without losing project continuity.
+
 ## Core idea
 
 Every tool reads and writes the same memory contract:
@@ -33,6 +43,30 @@ Memory Bridge stores operational memory, not full raw transcripts by default.
 - Handoff: a compact current-state summary for the next tool/person.
 
 This keeps memory useful and compact. You get the important context without dumping everything.
+
+## Popular tools that already work
+
+### Official wrappers (ready now)
+
+- Codex (`mb-codex`)
+- Claude (`mb-claude`)
+- Kiro (`mb-kiro`)
+
+### Works via contract (manual commands or hooks)
+
+These are commonly used and can integrate with Memory Bridge through terminal commands and/or tool instructions:
+
+- Cursor
+- VS Code (including extensions like Continue/Cline)
+- Windsurf
+- JetBrains IDEs
+- Gemini CLI
+- GitHub Copilot CLI
+- Aider
+- Replit
+- Firebase Studio (via terminal/task scripts)
+
+If a tool can run shell commands or supports pre/post task scripts, it can use the same memory contract.
 
 ## Install
 

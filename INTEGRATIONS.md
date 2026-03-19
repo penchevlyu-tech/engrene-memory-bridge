@@ -14,6 +14,38 @@ For any tool `<tool>`:
 
 This is the full interoperability model.
 
+## What this enables
+
+This contract is specifically designed for cross-tool continuity:
+
+- Session A in Tool X writes memory.
+- Session B in Tool Y reads and continues from it.
+- No tool-specific memory backend is required.
+
+## Popular tool matrix
+
+### Official wrapper support
+
+- Codex: `mb-codex`
+- Claude: `mb-claude`
+- Kiro: `mb-kiro`
+
+### Common tools with contract-based support
+
+Use Option A (manual) or Option C (native hooks/scripts):
+
+- Cursor
+- VS Code (Continue/Cline and similar)
+- Windsurf
+- JetBrains IDEs
+- Gemini CLI
+- GitHub Copilot CLI
+- Aider
+- Replit
+- Firebase Studio
+
+Requirement: the tool must allow shell commands and/or task hooks.
+
 ## Option A: Manual (works everywhere)
 
 Use this when your IDE has no hook support.
