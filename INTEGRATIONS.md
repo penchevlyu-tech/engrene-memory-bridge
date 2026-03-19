@@ -120,10 +120,26 @@ Map these commands:
 
 If your team uses Windows terminals, use the helper scripts from `scripts/windows`:
 
+- `scripts/windows/mb.ps1` (recommended, no global install)
+- `scripts/windows/mb.cmd` (recommended, no global install)
 - `scripts/windows/mb-pre.ps1`
 - `scripts/windows/mb-post.ps1`
 - `scripts/windows/mb-pre.cmd`
 - `scripts/windows/mb-post.cmd`
+
+Quick start (PowerShell):
+
+```powershell
+.\scripts\windows\mb.ps1 init
+.\scripts\windows\mb.ps1 resume --for gemini
+```
+
+Quick start (cmd):
+
+```cmd
+scripts\windows\mb.cmd init
+scripts\windows\mb.cmd resume --for gemini
+```
 
 PowerShell example:
 

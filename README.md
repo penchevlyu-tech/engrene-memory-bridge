@@ -234,10 +234,28 @@ mb-gemini post \
 
 Ready-to-use scripts are available in [`scripts/windows`](./scripts/windows/README.md):
 
+- `scripts/windows/mb.ps1` (recommended, no global install)
+- `scripts/windows/mb.cmd` (recommended, no global install)
 - `scripts/windows/mb-pre.ps1`
 - `scripts/windows/mb-post.ps1`
 - `scripts/windows/mb-pre.cmd`
 - `scripts/windows/mb-post.cmd`
+
+Recommended quick start (PowerShell, no global install):
+
+```powershell
+.\scripts\windows\mb.ps1 init
+.\scripts\windows\mb.ps1 doctor
+.\scripts\windows\mb.ps1 resume --for codex
+```
+
+Recommended quick start (cmd, no global install):
+
+```cmd
+scripts\windows\mb.cmd init
+scripts\windows\mb.cmd doctor
+scripts\windows\mb.cmd resume --for codex
+```
 
 PowerShell example:
 
