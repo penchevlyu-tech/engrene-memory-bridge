@@ -1,6 +1,6 @@
 # engrene-memory-bridge
 
-![Engrene Logo](https://engrene.com/wp-content/uploads/2025/11/Logo-Engrene.jpeg)
+![Engrene Logo](./assets/logo/engrene-logo.jpeg)
 
 Local-first memory bridge for AI workflows.
 
@@ -160,6 +160,24 @@ The UI supports:
 - Creating decision events (`decision add`)
 - Rebuilding handoff
 - Running doctor and search
+
+## Screenshots
+
+### UI (Light, English)
+
+![UI Light EN](./assets/screenshots/ui-light-en.png)
+
+### UI (Dark, English)
+
+![UI Dark EN](./assets/screenshots/ui-dark-en.png)
+
+### UI (Light, Portuguese - Brazil)
+
+![UI PT-BR Light](./assets/screenshots/ui-ptbr-light.png)
+
+### UI (Dark, Spanish)
+
+![UI ES Dark](./assets/screenshots/ui-es-dark.png)
 
 ## What should users ask the IDE/agent?
 
